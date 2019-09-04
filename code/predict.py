@@ -6,9 +6,9 @@ def predict_babelnet(input_path : str, output_path : str, resources_path : str) 
     This is the skeleton of the prediction function.
     The predict function will build your model, load the weights from the checkpoint and write a new file (output_path)
     with your predictions in the "<id> <BABELSynset>" format (e.g. "d000.s000.t000 bn:01234567n").
-    
+
     The resources folder should contain everything you need to make the predictions. It is the "resources" folder in your submission.
-    
+
     N.B. DO NOT HARD CODE PATHS IN HERE. Use resource_path instead, otherwise we will not be able to run the code.
     If you don't know what HARD CODING means see: https://en.wikipedia.org/wiki/Hard_coding
 
