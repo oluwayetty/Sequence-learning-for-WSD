@@ -1,8 +1,9 @@
 import pandas as pd
-import utils
+from clean import make_input_vocab, make_output_vocab, read_train, read_gold
+
 
 def preprocessing(
-    filename: str
+        filename: str
 ):
     """
     Preprocess the input file, building the co-occurence matrix.
@@ -12,29 +13,27 @@ def preprocessing(
     :param window: Number of context words to the left and to the right.
     :return: The co-occurence matrix unpacked.
     """
-    sentences = utils.read_file(filename)
-    # seqs, word_index, word_counts = utils.tokenize(sentences, max_vocab, min_count)
-    # print("Building cooccurences matrix...")
-    # cooccurence_dict = utils.build_cooccurrences(sentences=seqs, window=window)
-    # first_indices, second_indices, frequencies = utils.unpack_cooccurrence(
-    #     cooccurence_dict=cooccurence_dict
-    # )
-    # return first_indices, second_indices, frequencies, word_index, word_counts
+    train_sentences = read_train()
+    gold_vocab = read_gold()
+    output_vocab = make_output_vocab()
+    input_ = make_input_vocab()
+
+    return train_sentences, gold_vocab, output_vocab, input_
 
 
 def main(
-    path_data: str,
-    epochs: int,
-    batch: int,
-    vector_size: int,
-    window: int,
-    path_vectors: str,
-    max_vocab: int,
-    min_count: int,
-    alpha: float,
-    lr: float,
-    x_max: int,
-    save_mode: int,
+        path_data: str,
+        epochs: int,
+        batch: int,
+        vector_size: int,
+        window: int,
+        path_vectors: str,
+        max_vocab: int,
+        min_count: int,
+        alpha: float,
+        lr: float,
+        x_max: int,
+        save_mode: int,
 ):
     print("Preprocessing...")
     first_indices, second_indices, freq, word_index, word_counts = preprocessing(
