@@ -1,12 +1,12 @@
 import csv
 import string
 import json
-import pandas as pd
 from typing import List, Dict
 from nltk.corpus import wordnet as wn
 from lxml import etree as ET
 from nltk.corpus import stopwords
 from nltk import word_tokenize
+
 stoplist = stopwords.words('english')
 stop = list(string.punctuation)
 from config import XML_FILEPATH, DATA_FILE, GOLD_FILE, BABEL_WORDNET, JSON_FILE
@@ -16,11 +16,13 @@ class Error(Exception):
     """Base class for other exceptions"""
     pass
 
+
 class EmptyTagError(Error):
     """Raised when the text lang tag is empty"""
     print("Empty tag detected")
 
-def parse_to_dict(filename: str, gold = True) -> Dict:
+
+def parse_to_dict(filename: str, gold=True) -> Dict:
     """
     Read each line of gold text file or babelnet/wordnetID.
     :param filename
@@ -52,7 +54,7 @@ def read_xml(filename: str) -> List[str]:
     print("Parsing xml file.......")
 
     dict_gold = parse_to_dict(GOLD_FILE)
-    dict_babelnet = parse_to_dict(BABEL_WORDNET, gold = False)
+    dict_babelnet = parse_to_dict(BABEL_WORDNET, gold=False)
 
     sentence_array = []
     for event, element in xml_content:
@@ -68,14 +70,14 @@ def read_xml(filename: str) -> List[str]:
                             word = child.attrib['lemma']
                             sensekey = dict_gold.get(child.attrib['id']).strip()
                             synset = wn.lemma_from_key(sensekey).synset()
-                            synset_id = "wn:" + str(synset.offset()).zfill( 8) + synset.pos()
+                            synset_id = "wn:" + str(synset.offset()).zfill(8) + synset.pos()
                             babelnetID = dict_babelnet.get(synset_id)
                             info_array.extend([babelnetID, child.attrib['pos']])
                             data_dict[word] = info_array
                         else:
-                             # word, value = [child.attrib['lemma'], child.attrib['pos']]
-                             # word, value = [child.attrib['lemma'], 'UNK']
-                             data_dict[child.attrib['lemma']] = 'UNK'
+                            # word, value = [child.attrib['lemma'], child.attrib['pos']]
+                            # word, value = [child.attrib['lemma'], 'UNK']
+                            data_dict[child.attrib['lemma']] = 'UNK'
                     sentence_array.append(data_dict)
 
         except EmptyTagError:
@@ -85,10 +87,10 @@ def read_xml(filename: str) -> List[str]:
         while element.getprevious() is not None:
             del element.getparent()[0]
 
-
     print("Parsing all done.......")
     return sentence_array
     # return english_texts, ids
+
 
 def remove_stop_words(data):
     print("Removing stop words using nltk toolkit")
@@ -107,11 +109,12 @@ def parse_to_csv(sentence: List, babel_sentence: List) -> str:
     :returns csv format of sentences & babel_sentence
     """
     header = ['sentence', 'babel_sentence']
-    rows = zip(sentence,babel_sentence)
+    rows = zip(sentence, babel_sentence)
     with open(DATA_FILE, 'w', newline='') as f:
         wr = csv.writer(f)
         wr.writerow(i for i in header)
         wr.writerows(rows)
+
 
 def parse_to_json(sentences: List) -> None:
     with open(JSON_FILE, 'w') as fout:
